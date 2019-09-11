@@ -1,81 +1,123 @@
 # DracoonSDK
 Dracoon SDK for .NET
-<ul>
-	<li>.NET 4.5.2</li>
-	<li>One dependency library [Newtonsoft.Json]</li>
-</ul>
 
-========
-<ul>
-  <li>Functions list:</li>
-	<li>LoggedIn</li>
-	<li>CreateOAuthClient</li>
-	<li>GetOAuthClient</li>
-	<li>Search</li>
-	<li>SearchRoom</li>
-	<li>FilterByExtensions</li>
-	<li>FilterByClassifications</li>
-	<li>FilterBySize</li>
-	<li>SearchByPath</li>
-	<li>UserInfo</li>
-	<li>RevokeToken</li>
-	<li>GetFileDownloadUrl</li>
-	<li>FileMetadata</li>
-	<li>FolderMetadata</li>
-	<li>RoomMetadata</li>
-	<li>GetFilesDownloadUrlAsZip</li>
-	<li>CreateNewFolder</li>
-	<li>ListRooms</li>
-	<li>ListRoot</li>
-	<li>DeleteFile</li>
-	<li>DeleteFolder</li>
-	<li>DeleteRoom</li>
-	<li>DeleteFileFolder</li>
-	<li>DeleteMultipleFiles</li>
-	<li>DeleteMultipleFolders</li>
-	<li>DeleteMultipleFilesFolders</li>
-	<li>DeleteMultipleRooms</li>
-	<li>RenameFolder</li>
-	<li>RenameFile</li>
-	<li>ChangeFileClassification</li>
-	<li>ChangeFolderClassification</li>
-	<li>CreateRoom</li>
-	<li>EditRoomNameOrQuota</li>
-	<li>AddUserToRoom</li>
-	<li>DeleteUserFromRoom</li>
-	<li>DeleteMultipleUsersFromRoom</li>
-	<li>DownloadFile</li>
-	<li>DownloadFileAsStream</li>
-	<li>DownloadMultipleFilesAsZip</li>
-	<li>GetUploadLink</li>
-	<li>UploadLocalFile</li>
-	<li>GetHomeRoomSettings</li>
-	<li>SetHomeRoomSettings</li>
-	<li>CopyFile</li>
-	<li>CopyAndRenameFile</li>
-	<li>CopyMultipleFiles</li>
-	<li>CopyFolder</li>
-	<li>CopyAndRenameFolder</li>
-	<li>CopyMultipleFolders</li>
-	<li>CopyFileFolder</li>
-	<li>CopyAndRenameFileFolder</li>
-	<li>CopyMultipleFilesFolders</li>
-	<li>MoveFile</li>
-	<li>MoveAndRenameFile</li>
-	<li>MoveMultipleFiles</li>
-	<li>MoveFolder</li>
-	<li>MoveAndRenameFolder</li>
-	<li>MoveMultipleFolders</li>
-	<li>MoveFileFolder</li>
-	<li>MoveAndRenameFileFolder</li>
-	<li>MoveMultipleFilesFolders</li>
-	<li>ListTrashedFilesFolders</li>
-	<li>EmptyRecycleBin</li>
-	<li>Bookmark</li>
-	<li>UnBookmark</li>
-	<li>ListBookmarks</li>
-	<li>ListShares</li>
-	<li>ShareFileFolder</li>
-	<li>UnShareFileFolder</li>
-	<li>ShareInfo</li>
-</ul>
+
+
+# List of functions:
+* GetParents
+* TestServerConnection
+* TestTokenValidation
+* LoggedIn
+* CreateOAuthClient
+* GetOAuthClient
+* Search
+* SearchRoom
+* FilterByExtensions
+* FilterByClassifications
+* FilterBySize
+* SearchByPath
+* UserInfo
+* AcceptEULA
+* RevokeToken
+* GetFileDownloadUrl
+* FileMetadata
+* FolderMetadata
+* RoomMetadata
+* GetRoomID
+* GetFilesDownloadUrlAsZip
+* CreateNewFolder
+* ListRooms
+* ListRoot
+* DeleteFile
+* DeleteFolder
+* DeleteRoom
+* DeleteFileFolder
+* DeleteMultipleFiles
+* DeleteMultipleFolders
+* DeleteMultipleFilesFolders
+* DeleteMultipleRooms
+* RenameFolder
+* RenameFile
+* ChangeFileClassification
+* ChangeFolderClassification
+* CreateRoom
+* EditRoomNameOrQuota
+* AddUserToRoom
+* DeleteUserFromRoom
+* DeleteMultipleUsersFromRoom
+* DownloadFile
+* DownloadFileAsStream
+* DownloadMultipleFilesAsZip
+* GetUploadLink
+* UploadLocalFile
+* GetHomeRoomSettings
+* SetHomeRoomSettings
+* CopyFile
+* CopyAndRenameFile
+* CopyMultipleFiles
+* CopyFolder
+* CopyAndRenameFolder
+* CopyMultipleFolders
+* CopyFileFolder
+* CopyAndRenameFileFolder
+* CopyMultipleFilesFolders
+* MoveFile
+* MoveAndRenameFile
+* MoveMultipleFiles
+* MoveFolder
+* MoveAndRenameFolder
+* MoveMultipleFolders
+* MoveFileFolder
+* MoveAndRenameFileFolder
+* MoveMultipleFilesFolders
+* ListTrashedFilesFolders
+* EmptyRecycleBin
+* Bookmark
+* UnBookmark
+* ListBookmarks
+* ListShares
+* ShareFileFolder
+* UnShareFileFolder
+* ShareInfo
+
+
+# Code simple:
+**get token**
+```vb
+Dim tkn = Await DracoonSDK.GetToken.GetToken("user", "pass")
+```
+**set client**
+```vb
+Dim Clnt As DracoonSDK.IClient = New DracoonSDK.DClient(tkn.token)
+```
+**list rooms**
+```vb.net
+Dim RSLT = Await CLNT.ListRooms(20, 0, SortEnum.size, OrderEnum.asc)
+For Each onz In RSLT.RoomsList
+    DataGridView1.Rows.Add(onz.name, onz.id)
+Next
+```
+**list root files/folders**
+```vb
+Dim TheFilter As New DracoonSDK.DClient.List_root_Filtering
+TheFilter.type.FilesFolders = FilesFoldersEnum.both
+Dim RSLT = Await CLNT.ListRoot(TheFilter, T_RootID.Text, 20, 0, SortEnum.size, OrderEnum.asc)
+For Each onz In RSLT.itemsList
+    DataGridView1.Rows.Add(onz.name, onz.File_Folder.ToString, ConvSize(onz.size), onz.id)
+Next
+```
+**upload local file (without progress tracking)**
+```vb.net
+Dim UploadCancellationToken As New Threading.CancellationTokenSource()
+Dim RSLT = Await CLNT.UploadLocalFile("C:\ureWiz.png", 7992368, ClassificationEnum.Public, UploadTypes.FilePath, "ureWiz.png", nothing, UploadCancellationToken.Token)
+```
+**upload local file with progress tracking**
+```vb.net
+Dim UploadCancellationToken As New Threading.CancellationTokenSource()
+Dim prog_ReportCls As New Progress(Of MediafireSDK.ReportStatus)(Sub(ReportClass As MediafireSDK.ReportStatus)
+                   Label1.Text = String.Format("{0}/{1}", (ReportClass.BytesTransferred), (ReportClass.TotalBytes))
+                   ProgressBar1.Value = CInt(ReportClass.ProgressPercentage)
+                   Label2.Text = CStr(ReportClass.TextStatus)
+                   End Sub)
+Dim RSLT = Await CLNT.UploadLocalFile("C:\ureWiz.png", folderid, ClassificationEnum.Public, UploadTypes.FilePath, "ureWiz.png", prog_ReportCls , UploadCancellationToken.Token)
+```
