@@ -1,5 +1,7 @@
 # DracoonSDK
-Dracoon SDK for .NET
+Dracoon SDK for .NET<br>
+.net framework 4.5.2<br>
+.net standard 2.0<br>
 
 
 
