@@ -1,117 +1,162 @@
-﻿Imports DracoonSDK.JSON
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using DracoonSDK.JSON;
 
-Public Interface IClient
+namespace DracoonSDK
+{
+	public interface IClient
+	{
+		Task<JSON_GetParents> GetParents(int DestinationFileFolderID);
 
-    Function GetParents(DestinationFileFolderID As Integer) As Task(Of JSON_GetParents)
-    Function TestServerConnection() As Task(Of Boolean)
-    Function TestTokenValidation() As Task(Of Boolean)
+		Task<bool> TestServerConnection();
 
+		Task<bool> TestTokenValidation();
 
+		bool LoggedIn();
 
+		Task<JSON_CreateOAuthClient> CreateOAuthClient(string ClientName, string RedirectUrl);
 
+		Task<JSON_CreateOAuthClient> GetOAuthClient();
 
+		Task<JSON_ListRoot> Search(string SearchKeywords, int FolderID, int SubDepthLevel, DClient.Search_Filtering SearchFiltering = null, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
+		Task<JSON_ListRoot> SearchRoom(int RoomID, string SearchKeywords, DrAutilities.FilesFoldersEnum SearchType, int SubDepthLevel, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
-    Function LoggedIn() As Boolean
-    Function CreateOAuthClient(ClientName As String, RedirectUrl As String) As Task(Of JSON_CreateOAuthClient)
-    Function GetOAuthClient() As Task(Of JSON_CreateOAuthClient)
+		Task<JSON_ListRoot> FilterByExtensions(int FolderID, string Extension, DrAutilities.FormulaEnum Formula, int SubDepthLevel, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
-    
-    
-    Function Search(SearchKeywords As String, FolderID As Integer, SubDepthLevel As Integer, Optional SearchFiltering As DClient.Search_Filtering = Nothing, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRoot)
-    Function SearchRoom(RoomID As Integer, SearchKeywords As String, SearchType As DrAutilities.FilesFoldersEnum, SubDepthLevel As Integer, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRoot)
-    Function FilterByExtensions(FolderID As Integer, Extension As String, Formula As DrAutilities.FormulaEnum, SubDepthLevel As Integer, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRoot)
-    Function FilterByClassifications(FolderID As Integer, SearchType As DrAutilities.FilesFoldersEnum, Classification As DrAutilities.ClassificationEnum, SubDepthLevel As Integer, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRoot)
-    Function FilterBySize(FolderID As Integer, SearchType As DrAutilities.FilesFoldersEnum, SizeinByte As Integer, Symbols As DrAutilities.SymbolsEnum, SubDepthLevel As Integer, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRoot)
-    Function SearchByPath(FolderID As Integer, SearchType As DrAutilities.FilesFoldersEnum, PathKeywords As String, Formula As DrAutilities.FormulaEnum, SubDepthLevel As Integer, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRoot)
+		Task<JSON_ListRoot> FilterByClassifications(int FolderID, DrAutilities.FilesFoldersEnum SearchType, DrAutilities.ClassificationEnum Classification, int SubDepthLevel, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
+		Task<JSON_ListRoot> FilterBySize(int FolderID, DrAutilities.FilesFoldersEnum SearchType, int SizeinByte, DrAutilities.SymbolsEnum Symbols, int SubDepthLevel, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
-    Function UserInfo() As Task(Of JSON_UserInfo)
-    Function RevokeToken() As Task(Of Boolean)
-    Function GetFileDownloadUrl(FileID As Integer) As Task(Of JSON_GetFileDownloadUrl)
-    Function FileMetadata(FileID As Integer) As Task(Of JSON_FileMetadata)
-    Function FolderMetadata(FolderID As Integer) As Task(Of JSON_FolderMetadata)
-    Function RoomMetadata(RoomID As Integer) As Task(Of JSON_RoomMetadata)
+		Task<JSON_ListRoot> SearchByPath(int FolderID, DrAutilities.FilesFoldersEnum SearchType, string PathKeywords, DrAutilities.FormulaEnum Formula, int SubDepthLevel, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
-    Function GetFilesDownloadUrlAsZip(NodesIDs As List(Of Integer)) As Task(Of JSON_GetFileDownloadUrl)
+		Task<JSON_UserInfo> UserInfo();
 
-    Function CreateNewFolder(DestinationFolderID As Integer, FolderName As String) As Task(Of JSON_CreateNewFolder)
-    Function ListRooms(Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRooms)
-    Function ListRoot(ListrootFiltering As DClient.List_root_Filtering, Optional RoomFileFolderID As String = Nothing, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListRoot)
+		Task<bool> AcceptEULA();
 
+		Task<bool> RevokeToken();
 
+		Task<JSON_GetFileDownloadUrl> GetFileDownloadUrl(int FileID);
 
-    Function DeleteFile(FileID As Integer) As Task(Of JSON_DeleteFile)
-    Function DeleteFolder(FolderID As Integer) As Task(Of JSON_DeleteFile)
-    Function DeleteRoom(RoomID As Integer) As Task(Of JSON_DeleteFile)
-    Function DeleteFileFolder(FileFolderID As Integer) As Task(Of JSON_DeleteFile)
-    Function DeleteMultipleFiles(FilesIDs As List(Of Integer)) As Task(Of JSON_DeleteFile)
-    Function DeleteMultipleFolders(FoldersIDs As List(Of Integer)) As Task(Of JSON_DeleteFile)
-    Function DeleteMultipleFilesFolders(FilesFoldersIDs As List(Of Integer)) As Task(Of JSON_DeleteFile)
-    Function DeleteMultipleRooms(RoomsIDs As List(Of Integer)) As Task(Of JSON_DeleteFile)
+		Task<JSON_FileMetadata> FileMetadata(int FileID);
 
-    Function RenameFolder(FolderID As Integer, NewName As String) As Task(Of JSON_FolderMetadata)
-    Function RenameFile(FileID As Integer, NewName As String) As Task(Of JSON_FileMetadata)
+		Task<JSON_FolderMetadata> FolderMetadata(int FolderID);
 
-    Function ChangeFileClassification(FileID As Integer, Classification As DrAutilities.ClassificationEnum) As Task(Of JSON_FileMetadata)
-    Function ChangeFolderClassification(FolderID As Integer, Classification As DrAutilities.ClassificationEnum) As Task(Of JSON_FolderMetadata)
+		Task<JSON_RoomMetadata> RoomMetadata(int RoomID);
 
+		Task<int> GetRoomID(string RoomName);
 
-    Function CreateRoom(RoomName As String, Permissions As DrAutilities.ClassificationEnum, AdminUserID As Integer) As Task(Of JSON_RoomMetadata)
-    Function EditRoomNameOrQuota(RoomID As Integer, Optional NewName As String = Nothing, Optional Quota As Integer? = Nothing) As Task(Of JSON_RoomMetadata)
-    Function AddUserToRoom(RoomID As Integer, UserID As Integer, SetPermissions As JSON_Permissions) As Task(Of JSON_DeleteFile)
-    Function DeleteUserFromRoom(RoomID As Integer, UserID As Integer) As Task(Of JSON_DeleteFile)
-    Function DeleteMultipleUsersFromRoom(RoomID As Integer, UsersIDs As List(Of Integer)) As Task(Of JSON_DeleteFile)
+		Task<JSON_GetFileDownloadUrl> GetFilesDownloadUrlAsZip(List<int> NodesIDs);
 
-    Function DownloadFile(FileID As String, FileSaveDir As String, FileName As String, Optional ReportCls As IProgress(Of ReportStatus) = Nothing, Optional _proxi As ProxyConfig = Nothing, Optional TimeOut As Integer = 60, Optional token As Threading.CancellationToken = Nothing) As Task
-    Function DownloadFileAsStream(FileID As String, Optional ReportCls As IProgress(Of ReportStatus) = Nothing, Optional _proxi As ProxyConfig = Nothing, Optional TimeOut As Integer = 60, Optional token As Threading.CancellationToken = Nothing) As Task(Of IO.Stream)
-    Function DownloadMultipleFilesAsZip(NodesIDs As List(Of Integer), FileSaveDir As String, FileName As String, Optional ReportCls As IProgress(Of ReportStatus) = Nothing, Optional _proxi As ProxyConfig = Nothing, Optional TimeOut As Integer = 60, Optional token As Threading.CancellationToken = Nothing) As Task
+		Task<JSON_CreateNewFolder> CreateNewFolder(int DestinationFolderID, string FolderName);
 
-    Function GetUploadLink(DestinationFolderID As Integer, UploadedName As String, UploadedSize As String, Permissions As DrAutilities.ClassificationEnum) As Task(Of JSON_GetUploadLink)
-    Function UploadLocalFile(FileToUpload As Object, DestinationFolderID As String, Permissions As DrAutilities.ClassificationEnum, UploadType As DClient.UploadTypes, FileName As String, Optional ReportCls As IProgress(Of ReportStatus) = Nothing, Optional _proxi As ProxyConfig = Nothing, Optional token As Threading.CancellationToken = Nothing) As Task(Of JSON_FileMetadata)
+		Task<JSON_ListRooms> ListRooms(int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
-    Function GetHomeRoomSettings() As Task(Of JSON_GetHomeRoomSettings)
-    Function SetHomeRoomSettings(HomeRoomParentName As String, QuotaInBytes As Integer, Active As Boolean) As Task(Of JSON_SetHomeRoomSettings)
+		Task<JSON_ListRoot> ListRoot(DClient.List_root_Filtering ListrootFiltering, string RoomFileFolderID = null, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
 
-    Function CopyFile(SorceFileID As Integer, DestinationFolderID As Integer, Optional RenameTo As String = Nothing, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileMetadata)
-    Function CopyAndRenameFile(SorceFileID As Integer, DestinationFolderID As Integer, RenameTo As String, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileMetadata)
-    Function CopyMultipleFiles(SorceFilesIDs As List(Of Integer), DestinationFolderID As Integer, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileMetadata)
+		Task<bool> DeleteFile(int FileID);
 
-    Function CopyFolder(SorceFolderID As Integer, DestinationFolderID As Integer, Optional RenameTo As String = Nothing, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FolderMetadata)
-    Function CopyAndRenameFolder(SorceFolderID As Integer, DestinationFolderID As Integer, RenameTo As String, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FolderMetadata)
-    Function CopyMultipleFolders(SorceFoldersIDs As List(Of Integer), DestinationFolderID As Integer, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FolderMetadata)
+		Task<bool> DeleteFolder(int FolderID);
 
-    Function CopyFileFolder(SorceFileFolderID As Integer, DestinationFolderID As Integer, Optional RenameTo As String = Nothing, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileFolderMetadata)
-    Function CopyAndRenameFileFolder(SorceFileFolderID As Integer, DestinationFolderID As Integer, RenameTo As String, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileFolderMetadata)
-    Function CopyMultipleFilesFolders(SorceFilesFoldersIDs As List(Of Integer), DestinationFolderID As Integer, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileFolderMetadata)
+		Task<bool> DeleteRoom(int RoomID);
 
+		Task<bool> DeleteFileFolder(int FileFolderID);
 
+		Task<bool> DeleteMultipleFiles(List<int> FilesIDs);
 
+		Task<bool> DeleteMultipleFolders(List<int> FoldersIDs);
 
-    Function MoveFile(SorceFileID As Integer, DestinationFolderID As Integer, Optional RenameTo As String = Nothing, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileMetadata)
-    Function MoveAndRenameFile(SorceFileID As Integer, DestinationFolderID As Integer, RenameTo As String, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileMetadata)
-    Function MoveMultipleFiles(SorceFilesIDs As List(Of Integer), DestinationFolderID As Integer, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileMetadata)
+		Task<bool> DeleteMultipleFilesFolders(List<int> FilesFoldersIDs);
 
-    Function MoveFolder(SorceFolderID As Integer, DestinationFolderID As Integer, Optional RenameTo As String = Nothing, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FolderMetadata)
-    Function MoveAndRenameFolder(SorceFolderID As Integer, DestinationFolderID As Integer, RenameTo As String, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FolderMetadata)
-    Function MoveMultipleFolders(SorceFoldersIDs As List(Of Integer), DestinationFolderID As Integer, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FolderMetadata)
+		Task<bool> DeleteMultipleRooms(List<int> RoomsIDs);
 
-    Function MoveFileFolder(SorceFileFolderID As Integer, DestinationFolderID As Integer, Optional RenameTo As String = Nothing, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileFolderMetadata)
-    Function MoveAndRenameFileFolder(SorceFileFolderID As Integer, DestinationFolderID As Integer, RenameTo As String, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileFolderMetadata)
-    Function MoveMultipleFilesFolders(SorceFilesFoldersIDs As List(Of Integer), DestinationFolderID As Integer, Optional IfAlreadyExist As DrAutilities.ResolutionStrategyEnum? = Nothing) As Task(Of JSON_FileFolderMetadata)
+		Task<JSON_FolderMetadata> RenameFolder(int FolderID, string NewName);
 
+		Task<JSON_FileMetadata> RenameFile(int FileID, string NewName);
 
-    Function ListTrashedFilesFolders(RoomID As Integer, Optional FilesFolders As DrAutilities.FilesFoldersEnum? = Nothing, Optional containsKeywords As String = Nothing, Optional PathKeywords As String = Nothing, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListTrashedFilesFolders)
-    Function EmptyRecycleBin(RoomID As Integer) As Task(Of JSON_ListTrashedFilesFolders)
-    Function Bookmark(ID As Integer) As Task(Of JSON_FileFolderRoomMetadata)
-    Function UnBookmark(ID As Integer) As Task(Of JSON_DeleteFile)
-    Function ListBookmarks(Optional FilesFolders As DrAutilities.FilesFoldersEnum? = Nothing, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListFavorite)
+		Task<JSON_FileMetadata> ChangeFileClassification(int FileID, DrAutilities.ClassificationEnum Classification);
 
+		Task<JSON_FolderMetadata> ChangeFolderClassification(int FolderID, DrAutilities.ClassificationEnum Classification);
 
-    Function ListShares(Optional ListshareFiltering As DClient.List_Shares_Filtering = Nothing, Optional Limit As Integer = 50, Optional Offset As Integer = 0, Optional SortBy As DrAutilities.SortEnum? = Nothing, Optional Order As DrAutilities.OrderEnum? = Nothing) As Task(Of JSON_ListShares)
-    Function ShareFileFolder(FileFolderID As Integer, Optional PassWord As String = Nothing, Optional NameShareTo As String = Nothing, Optional MaxShareDownloads As String = Nothing) As Task(Of JSON_SharesItem)
-    Function UnShareFileFolder(ShareID As Integer) As Task(Of JSON_DeleteFile)
-    Function ShareInfo(ShareID As Integer) As Task(Of JSON_SharesItem)
+		Task<JSON_RoomMetadata> CreateRoom(string RoomName, DrAutilities.ClassificationEnum Permissions, int AdminUserID);
 
+		Task<JSON_RoomMetadata> EditRoomNameOrQuota(int RoomID, string NewName = null, int? Quota = null);
 
-End Interface
+		Task<bool> AddUserToRoom(int RoomID, int UserID, JSON_Permissions SetPermissions);
+
+		Task<bool> DeleteUserFromRoom(int RoomID, int UserID);
+
+		Task<bool> DeleteMultipleUsersFromRoom(int RoomID, List<int> UsersIDs);
+
+		Task DownloadFile(string FileID, string FileSaveDir, string FileName, IProgress<ReportStatus> ReportCls = null, int TimeOut = 60, CancellationToken token = default(CancellationToken));
+
+		Task<Stream> DownloadFileAsStream(string FileID, IProgress<ReportStatus> ReportCls = null, int TimeOut = 60, CancellationToken token = default(CancellationToken));
+
+		Task DownloadMultipleFilesAsZip(List<int> NodesIDs, string FileSaveDir, string FileName, IProgress<ReportStatus> ReportCls = null, int TimeOut = 60, CancellationToken token = default(CancellationToken));
+
+		Task<JSON_GetUploadLink> GetUploadLink(int DestinationFolderID, string UploadedName, string UploadedSize, DrAutilities.ClassificationEnum Permissions);
+
+		Task<JSON_FileMetadata> UploadLocalFile(object FileToUpload, string DestinationFolderID, DrAutilities.ClassificationEnum Permissions, DClient.UploadTypes UploadType, string FileName, IProgress<ReportStatus> ReportCls = null, CancellationToken token = default(CancellationToken));
+
+		Task<JSON_GetHomeRoomSettings> GetHomeRoomSettings();
+
+		Task<JSON_SetHomeRoomSettings> SetHomeRoomSettings(string HomeRoomParentName, int QuotaInBytes, bool Active);
+
+		Task<JSON_FileMetadata> CopyFile(int SorceFileID, int DestinationFolderID, string RenameTo = null, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileMetadata> CopyAndRenameFile(int SorceFileID, int DestinationFolderID, string RenameTo, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileMetadata> CopyMultipleFiles(List<int> SorceFilesIDs, int DestinationFolderID, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FolderMetadata> CopyFolder(int SorceFolderID, int DestinationFolderID, string RenameTo = null, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FolderMetadata> CopyAndRenameFolder(int SorceFolderID, int DestinationFolderID, string RenameTo, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FolderMetadata> CopyMultipleFolders(List<int> SorceFoldersIDs, int DestinationFolderID, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileFolderMetadata> CopyFileFolder(int SorceFileFolderID, int DestinationFolderID, string RenameTo = null, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileFolderMetadata> CopyAndRenameFileFolder(int SorceFileFolderID, int DestinationFolderID, string RenameTo, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileFolderMetadata> CopyMultipleFilesFolders(List<int> SorceFilesFoldersIDs, int DestinationFolderID, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileMetadata> MoveFile(int SorceFileID, int DestinationFolderID, string RenameTo = null, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileMetadata> MoveAndRenameFile(int SorceFileID, int DestinationFolderID, string RenameTo, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileMetadata> MoveMultipleFiles(List<int> SorceFilesIDs, int DestinationFolderID, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FolderMetadata> MoveFolder(int SorceFolderID, int DestinationFolderID, string RenameTo = null, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FolderMetadata> MoveAndRenameFolder(int SorceFolderID, int DestinationFolderID, string RenameTo, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FolderMetadata> MoveMultipleFolders(List<int> SorceFoldersIDs, int DestinationFolderID, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileFolderMetadata> MoveFileFolder(int SorceFileFolderID, int DestinationFolderID, string RenameTo = null, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileFolderMetadata> MoveAndRenameFileFolder(int SorceFileFolderID, int DestinationFolderID, string RenameTo, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_FileFolderMetadata> MoveMultipleFilesFolders(List<int> SorceFilesFoldersIDs, int DestinationFolderID, DrAutilities.ResolutionStrategyEnum? IfAlreadyExist = null);
+
+		Task<JSON_ListTrashedFilesFolders> ListTrashedFilesFolders(int RoomID, DrAutilities.FilesFoldersEnum? FilesFolders = null, string containsKeywords = null, string PathKeywords = null, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
+
+		Task<JSON_ListTrashedFilesFolders> EmptyRecycleBin(int RoomID);
+
+		Task<JSON_FileFolderRoomMetadata> Bookmark(int ID);
+
+		Task<bool> UnBookmark(int ID);
+
+		Task<JSON_ListFavorite> ListBookmarks(DrAutilities.FilesFoldersEnum? FilesFolders = null, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
+
+		Task<JSON_ListShares> ListShares(DClient.List_Shares_Filtering ListshareFiltering = null, int Limit = 50, int Offset = 0, DrAutilities.SortEnum? SortBy = null, DrAutilities.OrderEnum? Order = null);
+
+		Task<JSON_SharesItem> ShareFileFolder(int FileFolderID, string PassWord = null, string NameShareTo = null, string MaxShareDownloads = null);
+
+		Task<bool> UnShareFileFolder(int ShareID);
+
+		Task<JSON_SharesItem> ShareInfo(int ShareID);
+	}
+}
