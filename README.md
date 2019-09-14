@@ -1,8 +1,16 @@
 # DracoonSDK
-Dracoon SDK for .NET<br>
-.net framework 4.5.2<br>
-.net standard 2.0<br>
 
+`Download:`[https://github.com/loudKode/DracoonSDK/releases](https://github.com/loudKode/DracoonSDK/releases)<br>
+`NuGet:`
+[![NuGet](https://img.shields.io/nuget/v/DeQmaTech.DracoonSDK.svg?style=flat-square&logo=nuget)](https://www.nuget.org/packages/DeQmaTech.DracoonSDK)<br>
+
+**Features**
+* Assemblies for .NET 4.5.2 and .NET Standard 2.0
+* Just one external reference (Newtonsoft.Json)
+* Easy installation using NuGet
+* Upload/Download tracking support
+* Proxy Support
+* Upload/Download cancellation support
 
 
 # List of functions:
