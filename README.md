@@ -1,5 +1,6 @@
 # DracoonSDK
 
+
 `Download:`[https://github.com/loudKode/DracoonSDK/releases](https://github.com/loudKode/DracoonSDK/releases)<br>
 `NuGet:`
 [![NuGet](https://img.shields.io/nuget/v/DeQmaTech.DracoonSDK.svg?style=flat-square&logo=nuget)](https://www.nuget.org/packages/DeQmaTech.DracoonSDK)<br>
@@ -99,6 +100,11 @@ Dim tkn = Await DracoonSDK.GetToken.GetToken("user", "pass")
 **set client**
 ```vb
 Dim Clnt As DracoonSDK.IClient = New DracoonSDK.DClient(tkn.token)
+```
+**set client with proxy**
+```vb
+Dim m_proxy = New DracoonSDK.ProxyConfig With {.SetProxy = True, .ProxyIP = "172.0.0.0", .ProxyPort = 80, .ProxyUsername = "usr", .ProxyPassword = "pas"}
+Dim Clnt As DracoonSDK.IClient = New DracoonSDK.DClient(tkn.token,m_proxy)
 ```
 **list rooms**
 ```vb.net
